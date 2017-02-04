@@ -1,0 +1,15 @@
+Package: jdify
+Type: Package
+Title: Joint Density Classifiers
+Version: 0.1.0.9000
+Authors@R: person("Thomas", "Nagler", , "thomas.nagler@tum.de", c("aut", "cre"))
+Description: Implements classifiers based on the joint density of the predictors
+  and the class variable. Several methods for joint density estimation
+  can be used.
+License: GPL-3 + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: cctools, parallel, doParallel, foreach
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.0.0
+Suggests: testthat
