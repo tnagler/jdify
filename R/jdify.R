@@ -46,8 +46,14 @@
 #' @export
 jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
                     eval_fun = predict, cc = FALSE, ...) {
-    # create model frame (incl. dummy coding of factor variables)
     data <- as.data.frame(data)
+    # ordered variables must be numeric, otherwise they are expanded as factors
+    i_ordered <- which(sapply(data, function(x) is.ordered(x)))
+    if (length(i_ordered) == 0) {
+        for (i in i_ordered)
+            data[, i] <- as.numeric(dat[, i])
+    }
+    # create model frame (incl. dummy coding of factor variables)
     mf <- model.frame(formula = formula, data = data)
     if (length(levels(as.factor(mf[, 1]))) != 2)
         stop("Only binary classification implemented so far.")
@@ -56,6 +62,14 @@ jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
     mf <- ordered_as_int(mf)
     mf_eval <- if (cc) cont_conv(with_num_class(mf)) else with_num_class(mf)
     f_hat <- fit_fun(mf_eval, ...)
+    # create jdify object
+    out <- structure(
+        list(model_frame = mf,
+             f_hat = f_hat,
+             fit_fun = fit_fun,
+             eval_fun = eval_fun),
+        class = "jdify"
+    )
 
     # check if eval_fun is appropriate
     tryCatch(
@@ -63,14 +77,7 @@ jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
         error = function(e) stop("eval_fun doesn't work.")
     )
 
-    # return jdify object
-    structure(
-        list(model_frame = mf,
-             f_hat = f_hat,
-             fit_fun = fit_fun,
-             eval_fun = eval_fun),
-        class = "jdify"
-    )
+    out
 }
 
 with_num_class <- function(mf) {
