@@ -2,6 +2,9 @@
 #'
 #' Fits a generic joint density model for the predictors and class variables.
 #'
+#' For predicting the class or conditional probabilities, see,
+#' [predict.jdify()].
+#'
 #' @param formula an object of class "formula"; same as [stats::lm()].
 #' @param data matrix, data frame, list or environment (or object coercible by
 #'   [base::as.data.frame()]) containing the variables in the model.
@@ -12,14 +15,11 @@
 #'   takes an object fitted by `fit_fun` and evaluates the density estimate on
 #'   `newdata`.
 #' @param cc if `TRUE`, discrete variables (and the class indicator) are made
-#' continuous with [cctools::cont_conv()]; only use `FALSE` when your `fit_fun`
-#' can handle discrete variables.
+#'   continuous with [cctools::cont_conv()]; only use `FALSE` (default) when
+#'   your `fit_fun` can handle discrete variables.
 #' @param ... additional parameters passed to `fit_fun`.
 #'
 #' @return An object of class `jdify`.
-#'
-#' For predicting the class or conditional probabilities, see,
-#' [predict.jdify()].
 #'
 #' @examples
 #' # simulate training and test data

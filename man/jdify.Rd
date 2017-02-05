@@ -22,19 +22,20 @@ takes an object fitted by \code{fit_fun} and evaluates the density estimate on
 \code{newdata}.}
 
 \item{cc}{if \code{TRUE}, discrete variables (and the class indicator) are made
-continuous with \code{\link[cctools:cont_conv]{cctools::cont_conv()}}; only use \code{FALSE} when your \code{fit_fun}
-can handle discrete variables.}
+continuous with \code{\link[cctools:cont_conv]{cctools::cont_conv()}}; only use \code{FALSE} (default) when
+your \code{fit_fun} can handle discrete variables.}
 
 \item{...}{additional parameters passed to \code{fit_fun}.}
 }
 \value{
 An object of class \code{jdify}.
-
-For predicting the class or conditional probabilities, see,
-\code{\link[=predict.jdify]{predict.jdify()}}.
 }
 \description{
 Fits a generic joint density model for the predictors and class variables.
+}
+\details{
+For predicting the class or conditional probabilities, see,
+\code{\link[=predict.jdify]{predict.jdify()}}.
 }
 \examples{
 # simulate training and test data

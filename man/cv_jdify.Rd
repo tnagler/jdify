@@ -30,7 +30,7 @@ can handle discrete variables.}
 \item{cores}{number of cores for parallelized cross validation (based on
 \code{\link[foreach:foreach]{foreach::foreach()}}).}
 
-\item{...}{unused.}
+\item{...}{further arguments passed to \code{fit_fun()}.}
 }
 \description{
 Performs k-fold cross validation for a \code{jdify} object.
