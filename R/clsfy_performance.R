@@ -32,12 +32,13 @@
 #' abline(0, 1)
 #'
 #' @export
-clsfy_performance <- function(scores, true_cl, threshold = 0.5) {
+clsfyr_performance <- function(scores, true_cl, threshold = 0.5) {
     true_cl <-  as.numeric(as.factor(true_cl))
     stopifnot(NCOL(scores) == 1)
 
 
     # calculate performance for each prediction
+    threshold <- sort(threshold)
     preds <- sapply(threshold, function(t) (1:2)[1 + (scores < t)])
     out <- apply(preds, 2, get_one_measure, true_cl = true_cl)
 
@@ -49,7 +50,7 @@ clsfy_performance <- function(scores, true_cl, threshold = 0.5) {
                        "ACC", "F1", "MCC", "Informedness", "Markedness",
                        "threshold")
     colnames(out) <- paste0("thr", 1:length(threshold))
-    class(out) <- "clsfy_performance"
+    class(out) <- "clsfyr_performance"
     out
 }
 
@@ -82,3 +83,42 @@ get_one_measure <- function(x, true_cl) {
       TP / P + TN / N - 1,                  # Informedness
       TP / (TP + FP) + TN / (TN + FN) - 1)  # Markedness
 }
+
+#' ROC plots
+#'
+#' Produces a ROC plot for one or several `"clsfyr_performance"` objects.
+#'
+#' @param x object of class `"clsfyr_performance"` or a list of such objects.
+#' @param cols vector of colors for the `"clsfyr_performance"` object.
+#' @param ltys vector of line types for the `"clsfyr_performance"`` object.
+#'
+#' @export
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom graphics lines plot
+clsfyr_rocplot <- function(x, cols = brewer.pal(3, "Set1"), ltys = NULL) {
+    # single model
+    if (inherits(x, "clsfyr_performance"))
+        x <- list(x)
+    if (!(all(sapply(x, inherits, "clsfyr_performance"))))
+        stop(paste0("x has wrong type; must be ",
+                    'either an object of class "clsfy_performance"',
+                    "or a list of such objects."))
+    if (is.null(ltys))
+        ltys <- seq_along(x)
+    plot(make_roc(x[[1]]), type = "l", lty = ltys[1], col = cols[1])
+    for (i in (1 + seq_along(x[-1]))) {
+        lines(make_roc(x[[i]]), type = "l", lty = ltys[i], col = cols[i])
+    }
+}
+
+make_roc <- function(perf) {
+    roc <- t(perf[c("FPR", "TPR"), ])
+    # add (0, 0) and (1, 1) points to ensure full plot
+    roc <- rbind(roc, c(0, 0), c(1, 1))
+    # sort for line plot
+    roc[, "FPR"] <- sort(roc[, "FPR"])
+    roc[, "TPR"] <- sort(roc[, "TPR"])
+
+    roc
+}
+
