@@ -5,27 +5,30 @@
 #' @param formula an object of class "formula"; same as [stats::lm()].
 #' @param data matrix, data frame, list or environment (or object coercible by
 #'   [base::as.data.frame()]) containing the variables in the model.
-#' @param fit_fun a function of type `function(x, ...)` that fits a joint
-#'   density model on a data matrix `x`. The `...` can be used for passing
-#'   additional parameters.
-#' @param eval_fun a function of type `function(object, newdata, ...)` that
-#'   takes an object fitted by `fit_fun` and evaluates the density estimate on
-#'   `newdata`.
-#' @param cc if `TRUE`, discrete variables (and the class indicator) are made
-#' continuous with [cctools::cont_conv()]; only use `FALSE` when your `fit_fun`
-#' can handle discrete variables.
+#' @param jd_method an object of class `"jd_method"` defining the method for joint
+#' density estimation, see [jd_method()].
 #' @param folds number of folds.
 #' @param cores number of cores for parallelized cross validation (based on
 #'   [foreach::foreach()]).
 #' @param ... further arguments passed to `fit_fun()`.
 #'
+#' @return A list with elements
+#' \itemize{
+#'   \item{`folds1``, ..., `foldsk`: }{for each fold: the fitted model `$fit`, estimated
+#' conditional probabilities (`$cprobs`), and indexes for training and test data
+#' (`$train_index`, `$test_index`).}
+#'
+#'   \item{`cv_cprobs`: }{aggragated out-of-sample `cprobs` in same order as original
+#' data.}
+#' }
+#'
+#'
 #' @importFrom foreach foreach  %dopar% %do%
 #' @importFrom doParallel registerDoParallel
 #' @importFrom parallel makeCluster stopCluster
 #' @export
-cv_jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
-                     eval_fun = predict, cc = FALSE, folds = 10, cores = 1,
-                     ...) {
+cv_jdify <- function(formula, data, jd_method = "cctools", folds  = 10,
+                     cores = 1,  ...) {
     # preprocessing
     stopifnot(folds >= 1)
     folds <- round(folds)
@@ -42,12 +45,18 @@ cv_jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
         cl <- makeCluster(min(cores, folds[1]))
         registerDoParallel(cl)
         on.exit(stopCluster(cl))
-        res_folds <- foreach(k = 1:folds[1]) %dopar%
-            fit_fold(k, mf, test_indexes, fit_fun, eval_fun, ...)
+        res_folds <- foreach(
+            k = 1:folds[1],
+            .export = c("fit_fold", "prep_data_np")
+        ) %dopar%
+            fit_fold(k, mf, test_indexes, jd_method, ...)
     } else {
         # without
-        res_folds <- foreach(k = 1:folds[1]) %do%
-            fit_fold(k, mf, test_indexes, fit_fun, eval_fun, ...)
+        res_folds <- foreach(
+            k = 1:folds[1],
+            .export = c("fit_fold", "prep_data_np")
+        ) %do%
+            fit_fold(k, mf, test_indexes, jd_method, ...)
     }
 
     res_folds$model_frame <- mf
@@ -61,14 +70,10 @@ cv_jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
     res_folds
 }
 
-fit_fold <- function(fold, mf, test_indexes, fit_fun, eval_fun, ...) {
+fit_fold <- function(fold, mf, test_indexes, jd_method, ...) {
     test_index <- test_indexes[[fold]]
     # fit on training data
-    fit <- jdify(formula(mf),
-                 data = mf[-test_index, ],
-                 fit_fun = fit_fun,
-                 eval_fun = eval_fun,
-                 ...)
+    fit <- jdify(formula(mf), data = mf[-test_index, ], jd_method, ...)
     # evaluate on test data
     cprobs <- predict(fit, mf[test_index, ], what = "cprobs")
 

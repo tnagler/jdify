@@ -4,8 +4,7 @@
 \alias{jdify}
 \title{Joint density classification}
 \usage{
-jdify(formula, data, fit_fun = function(x, ...) NULL, eval_fun = predict,
-  cc = FALSE, ...)
+jdify(formula, data, jd_method = "cctools", ...)
 }
 \arguments{
 \item{formula}{an object of class "formula"; same as \code{\link[stats:lm]{stats::lm()}}.}
@@ -13,17 +12,8 @@ jdify(formula, data, fit_fun = function(x, ...) NULL, eval_fun = predict,
 \item{data}{matrix, data frame, list or environment (or object coercible by
 \code{\link[base:as.data.frame]{base::as.data.frame()}}) containing the variables in the model.}
 
-\item{fit_fun}{a function of type \code{function(x, ...)} that fits a joint
-density model on a data matrix \code{x}. The \code{...} can be used for passing
-additional parameters.}
-
-\item{eval_fun}{a function of type \code{function(object, newdata, ...)} that
-takes an object fitted by \code{fit_fun} and evaluates the density estimate on
-\code{newdata}.}
-
-\item{cc}{if \code{TRUE}, discrete variables (and the class indicator) are made
-continuous with \code{\link[cctools:cont_conv]{cctools::cont_conv()}}; only use \code{FALSE} (default) when
-your \code{fit_fun} can handle discrete variables.}
+\item{jd_method}{an object of class \code{"jd_method"} or a character string
+for built-in methods, see \code{\link[=jd_method]{jd_method()}}.}
 
 \item{...}{additional parameters passed to \code{fit_fun}.}
 }
@@ -44,11 +34,7 @@ dat$cl <- c("A", "B")[round(pnorm(dat$x1 + dat$x2)) + 1]
 dat_test <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
 dat_test$cl <- c("A", "B")[round(pnorm(dat_test$x1 + dat_test$x2)) + 1]
 
-# fit density with cckde
-fit_fun <- function(x) cctools::cckde(x)
-eval_fun <- function(object, newdata) cctools::dcckde(newdata, object)
-model <- jdify(cl ~ x1 + x2, dat, fit_fun, eval_fun)
-
+model <- jdify(cl ~ x1 + x2, dat)              # fitted joint density
 pred <- predict(model, dat)                    # class predictions
 probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
 

@@ -4,8 +4,7 @@
 \alias{cv_jdify}
 \title{Cross validation for joint density classification}
 \usage{
-cv_jdify(formula, data, fit_fun = function(x, ...) NULL, eval_fun = predict,
-  cc = FALSE, folds = 10, cores = 1, ...)
+cv_jdify(formula, data, jd_method = "cctools", folds = 10, cores = 1, ...)
 }
 \arguments{
 \item{formula}{an object of class "formula"; same as \code{\link[stats:lm]{stats::lm()}}.}
@@ -13,17 +12,8 @@ cv_jdify(formula, data, fit_fun = function(x, ...) NULL, eval_fun = predict,
 \item{data}{matrix, data frame, list or environment (or object coercible by
 \code{\link[base:as.data.frame]{base::as.data.frame()}}) containing the variables in the model.}
 
-\item{fit_fun}{a function of type \code{function(x, ...)} that fits a joint
-density model on a data matrix \code{x}. The \code{...} can be used for passing
-additional parameters.}
-
-\item{eval_fun}{a function of type \code{function(object, newdata, ...)} that
-takes an object fitted by \code{fit_fun} and evaluates the density estimate on
-\code{newdata}.}
-
-\item{cc}{if \code{TRUE}, discrete variables (and the class indicator) are made
-continuous with \code{\link[cctools:cont_conv]{cctools::cont_conv()}}; only use \code{FALSE} when your \code{fit_fun}
-can handle discrete variables.}
+\item{jd_method}{an object of class \code{"jd_method"} defining the method for joint
+density estimation, see \code{\link[=jd_method]{jd_method()}}.}
 
 \item{folds}{number of folds.}
 
@@ -31,6 +21,15 @@ can handle discrete variables.}
 \code{\link[foreach:foreach]{foreach::foreach()}}).}
 
 \item{...}{further arguments passed to \code{fit_fun()}.}
+}
+\value{
+A list with elements
+\itemize{
+\item{\code{folds1``, ...,}foldsk\code{: }{for each fold: the fitted model}$fit\code{, estimated conditional probabilities (}$cprobs\code{), and indexes for training and test data (}$train_index\code{,}$test_index`).}
+
+\item{\code{cv_cprobs}: }{aggragated out-of-sample \code{cprobs} in same order as original
+data.}
+}
 }
 \description{
 Performs k-fold cross validation for a \code{jdify} object.

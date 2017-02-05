@@ -31,11 +31,7 @@ dat$cl <- c("A", "B")[round(pnorm(dat$x1 + dat$x2)) + 1]
 dat_test <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
 dat_test$cl <- c("A", "B")[round(pnorm(dat_test$x1 + dat_test$x2)) + 1]
 
-# fit density with cckde
-fit_fun <- function(x) cctools::cckde(x)
-eval_fun <- function(object, newdata) cctools::dcckde(newdata, object)
-model <- jdify(cl ~ x1 + x2, dat, fit_fun, eval_fun)
-
+model <- jdify(cl ~ x1 + x2, data = dat)       # joint density fit
 probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
 
 # calculate performance measures

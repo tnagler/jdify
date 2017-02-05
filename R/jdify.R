@@ -8,15 +8,8 @@
 #' @param formula an object of class "formula"; same as [stats::lm()].
 #' @param data matrix, data frame, list or environment (or object coercible by
 #'   [base::as.data.frame()]) containing the variables in the model.
-#' @param fit_fun a function of type `function(x, ...)` that fits a joint
-#'   density model on a data matrix `x`. The `...` can be used for passing
-#'   additional parameters.
-#' @param eval_fun a function of type `function(object, newdata, ...)` that
-#'   takes an object fitted by `fit_fun` and evaluates the density estimate on
-#'   `newdata`.
-#' @param cc if `TRUE`, discrete variables (and the class indicator) are made
-#'   continuous with [cctools::cont_conv()]; only use `FALSE` (default) when
-#'   your `fit_fun` can handle discrete variables.
+#' @param jd_method an object of class `"jd_method"` or a character string
+#'   for built-in methods, see [jd_method()].
 #' @param ... additional parameters passed to `fit_fun`.
 #'
 #' @return An object of class `jdify`.
@@ -28,11 +21,7 @@
 #' dat_test <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
 #' dat_test$cl <- c("A", "B")[round(pnorm(dat_test$x1 + dat_test$x2)) + 1]
 #'
-#' # fit density with cckde
-#' fit_fun <- function(x) cctools::cckde(x)
-#' eval_fun <- function(object, newdata) cctools::dcckde(newdata, object)
-#' model <- jdify(cl ~ x1 + x2, dat, fit_fun, eval_fun)
-#'
+#' model <- jdify(cl ~ x1 + x2, dat)              # fitted joint density
 #' pred <- predict(model, dat)                    # class predictions
 #' probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
 #'
@@ -44,40 +33,49 @@
 #' @import cctools
 #' @importFrom stats model.frame predict formula
 #' @export
-jdify <- function(formula, data, fit_fun = function(x, ...) NULL,
-                    eval_fun = predict, cc = FALSE, ...) {
+jdify <- function(formula, data, jd_method = "cctools", ...) {
+    if (is.character(jd_method) == 1)
+        jd_method <- jd_method(jd_method)
+    mf <- make_model_frame(formula, data)
+
+    # fit density estimator
+    args <- modifyList(list(x = prep_for_fit(mf, jd_method)), jd_method$.dots)
+    args <- modifyList(args, list(...))
+    f_hat <- do.call(jd_method$fit_fun, args)
+
+    # create jdify object
+    structure(
+        list(model_frame = mf,
+             f_hat = f_hat,
+             jd_method = jd_method),
+        class = "jdify"
+    )
+}
+
+make_model_frame <- function(formula, data) {
+    ## data preproccessing
     data <- as.data.frame(data)
     # ordered variables must be numeric, otherwise they are expanded as factors
     i_ordered <- which(sapply(data, function(x) is.ordered(x)))
-    if (length(i_ordered) == 0) {
+    if (length(i_ordered) > 0) {
         for (i in i_ordered)
-            data[, i] <- as.numeric(dat[, i])
+            data[, i] <- as.numeric(data[, i])
     }
     # create model frame (incl. dummy coding of factor variables)
     mf <- model.frame(formula = formula, data = data)
-    if (length(levels(as.factor(mf[, 1]))) != 2)
+    if (length(levels(as.factor(mf[, 1]))) > 2)
         stop("Only binary classification implemented so far.")
 
-    # fit density estimator
-    mf <- ordered_as_int(mf)
-    mf_eval <- if (cc) cont_conv(with_num_class(mf)) else with_num_class(mf)
-    f_hat <- fit_fun(mf_eval, ...)
-    # create jdify object
-    out <- structure(
-        list(model_frame = mf,
-             f_hat = f_hat,
-             fit_fun = fit_fun,
-             eval_fun = eval_fun),
-        class = "jdify"
-    )
+    # convert all ordered variables to integers
+    ordered_as_int(mf)
+}
 
-    # check if eval_fun is appropriate
-    tryCatch(
-        eval_fun(f_hat, newdata = with_num_class(mf[1, ])),
-        error = function(e) stop("eval_fun doesn't work.")
-    )
-
-    out
+prep_for_fit <- function(model_frame, jd_method) {
+    if (jd_method$cc) {
+        return(cont_conv(with_num_class(model_frame)))
+    } else {
+        return(with_num_class(model_frame))
+    }
 }
 
 with_num_class <- function(mf) {
@@ -113,13 +111,11 @@ ordered_as_int <- function(mf) {
 #' dat_test <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
 #' dat_test$cl <- c("A", "B")[round(pnorm(dat_test$x1 + dat_test$x2)) + 1]
 #'
-#' # fit density with cckde
-#' fit_fun <- function(x) cctools::cckde(x)
-#' eval_fun <- function(object, newdata) cctools::dcckde(newdata, object)
-#' model <- jdify(cl ~ x1 + x2, dat, fit_fun, eval_fun)
-#'
+#' # fit density with cctools package
+#' model <- jdify(cl ~ x1 + x2, data = dat, jd_method("cctools"))
 #' pred <- predict(model, dat)                    # class predictions
 #' probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
+#'
 #'
 #' @importFrom stats model.frame predict
 #' @export
@@ -141,10 +137,10 @@ jdify_cprobs <- function(object, newdata) {
     # joint density at class = 1
     newdata <- cbind(data.frame(cl = 1), newdata)
     names(newdata)[1] <- names(object$model_frame)[1]
-    f1 <- object$eval_fun(object$f_hat, newdata)
+    f1 <- object$jd_method$eval_fun(object$f_hat, newdata)
     newdata[, 1] <- 2
     # joint density at class = 2
-    f2 <- object$eval_fun(object$f_hat, newdata)
+    f2 <- object$jd_method$eval_fun(object$f_hat, newdata)
 
     # joint density of predictors
     fx <- f1 + f2

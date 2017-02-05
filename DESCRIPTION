@@ -9,7 +9,14 @@ Description: Implements classifiers based on the joint density of the predictors
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: cctools, parallel, doParallel, foreach
+Imports: 
+  cctools, 
+  parallel, 
+  doParallel, 
+  foreach
+Suggests:
+  kdevine,
+  np,
+  testthat
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.0
-Suggests: testthat
