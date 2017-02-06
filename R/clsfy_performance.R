@@ -95,7 +95,7 @@ get_one_measure <- function(x, true_cl) {
 #' @export
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom graphics lines plot
-clsfyr_rocplot <- function(x, cols = brewer.pal(3, "Set1"), ltys = NULL) {
+clsfyr_rocplot <- function(x, cols = NULL, ltys = NULL) {
     # single model
     if (inherits(x, "clsfyr_performance"))
         x <- list(x)
@@ -103,12 +103,22 @@ clsfyr_rocplot <- function(x, cols = brewer.pal(3, "Set1"), ltys = NULL) {
         stop(paste0("x has wrong type; must be ",
                     'either an object of class "clsfy_performance"',
                     "or a list of such objects."))
+
+    if (is.null(cols))
+        suppressWarnings(cols <- brewer.pal(length(x), "Set1"))
     if (is.null(ltys))
         ltys <- seq_along(x)
+    if (is.null(names(x)))
+        names(x) <- paste0("method", seq_along(x))
+
     plot(make_roc(x[[1]]), type = "l", lty = ltys[1], col = cols[1])
     for (i in (1 + seq_along(x[-1]))) {
         lines(make_roc(x[[i]]), type = "l", lty = ltys[i], col = cols[i])
     }
+    if (length(x) > 1) {
+    }
+    legend("bottomright", legend = names_with_auc(x), col = cols, lty = ltys)
+
 }
 
 make_roc <- function(perf) {
@@ -122,3 +132,18 @@ make_roc <- function(perf) {
     roc
 }
 
+get_auc <- function(perf) {
+    roc <- make_roc(perf)
+    idx <- seq_along(roc[, 1])[-1]
+    (roc[idx, 1] - roc[idx - 1, 1]) %*% (roc[idx, 2] + roc[idx - 1, 2]) / 2
+}
+
+names_with_auc <- function(lst) {
+    nms <- numeric(length(lst))
+    for (i in seq_along(nms)) {
+        nms[i] <- paste0(
+            names(lst)[i], " (AUC = ", formatC(get_auc(lst[[i]]), 2), ")"
+        )
+    }
+    nms
+}
