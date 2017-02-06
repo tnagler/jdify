@@ -1,9 +1,9 @@
 context("Joint density estimation methods")
 
 test_that("Default methods work", {
-    expect_length(jd_method("cctools"), 5)
-    expect_length(jd_method("kdevine"), 5)
-    expect_length(jd_method("np"), 5)
+    expect_length(jd_method("cctools"), 4)
+    expect_length(jd_method("kdevine"), 4)
+    expect_length(jd_method("np"), 4)
 })
 
 test_that("Custom building of methods works", {

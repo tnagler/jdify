@@ -15,17 +15,18 @@
 #'
 #' @examples
 #' # simulate training and test data
-#' dat <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
-#' dat$cl <- c("A", "B")[round(pnorm(dat$x1 + dat$x2)) + 1]
-#' dat_test <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
-#' dat_test$cl <- c("A", "B")[round(pnorm(dat_test$x1 + dat_test$x2)) + 1]
+#' dat <- data.frame(
+#'     cl = as.factor(rbinom(10, 1, 0.5)),
+#'     x1 = rnorm(10),
+#'     x2 = rbinom(10, 1, 0.3)
+#' )
 #'
 #' model <- jdify(cl ~ x1 + x2, data = dat)       # joint density fit
 #' probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
 #'
 #' # calculate performance measures
 #' t <- seq(0, 1, by = 0.05)
-#' perf <- clsfy_performance(scores = probs[, 1], dat[, 1], threshold = t)
+#' perf <- clsfyr_performance(scores = probs[, 1], dat[, 1], threshold = t)
 #'
 #' # ROC plot
 #' plot(t(perf[c("TPR", "FPR"), ]), type = "l", xlim = c(0, 1), ylim = c(0, 1))
@@ -92,9 +93,28 @@ get_one_measure <- function(x, true_cl) {
 #' @param cols vector of colors for the `"clsfyr_performance"` object.
 #' @param ltys vector of line types for the `"clsfyr_performance"`` object.
 #'
+#' @examples
+#' # simulate training and test data
+#' dat <- data.frame(
+#'     cl = as.factor(rbinom(10, 1, 0.5)),
+#'     x1 = rnorm(10),
+#'     x2 = rbinom(10, 1, 0.3)
+#' )
+#'
+#' model <- jdify(cl ~ x1 + x2, data = dat)       # joint density fit
+#' probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
+#'
+#' # calculate performance measures
+#' t <- seq(0, 1, by = 0.05)
+#' perf <- clsfyr_performance(scores = probs[, 1], dat[, 1], threshold = t)
+#'
+#' # ROC plot
+#' plot(t(perf[c("TPR", "FPR"), ]), type = "l", xlim = c(0, 1), ylim = c(0, 1))
+#' abline(0, 1)
+#'
 #' @export
 #' @importFrom RColorBrewer brewer.pal
-#' @importFrom graphics lines plot
+#' @importFrom graphics lines plot legend
 clsfyr_rocplot <- function(x, cols = NULL, ltys = NULL) {
     # single model
     if (inherits(x, "clsfyr_performance"))
@@ -119,6 +139,7 @@ clsfyr_rocplot <- function(x, cols = NULL, ltys = NULL) {
     }
     legend("bottomright", legend = names_with_auc(x), col = cols, lty = ltys)
 
+    invisible(lapply(x, make_roc))
 }
 
 make_roc <- function(perf) {

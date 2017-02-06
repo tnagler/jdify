@@ -29,19 +29,20 @@ For predicting the class or conditional probabilities, see,
 }
 \examples{
 # simulate training and test data
-dat <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
-dat$cl <- c("A", "B")[round(pnorm(dat$x1 + dat$x2)) + 1]
-dat_test <- data.frame(x1 = rnorm(10), x2 = rbinom(10, 1, 0.3))
-dat_test$cl <- c("A", "B")[round(pnorm(dat_test$x1 + dat_test$x2)) + 1]
+dat <- data.frame(
+    cl = as.factor(rbinom(10, 1, 0.5)),
+    x1 = rnorm(10),
+    x2 = rbinom(10, 1, 0.3)
+)
 
 model <- jdify(cl ~ x1 + x2, dat)              # fitted joint density
 pred <- predict(model, dat)                    # class predictions
 probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
 
 # in-sample performance
-clsfy_performance(probs[, 1], dat[, 1], threshold = seq(0, 1, by = 0.05))
+clsfyr_performance(probs[, 1], dat[, 1], threshold = seq(0, 1, by = 0.05))
 
 }
 \seealso{
-\code{\link[=predict.jdify]{predict.jdify()}}, \code{\link[=clsfy_performance]{clsfy_performance()}}
+\code{\link[=predict.jdify]{predict.jdify()}}, \code{\link[=clsfyr_performance]{clsfyr_performance()}}
 }

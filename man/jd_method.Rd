@@ -5,7 +5,7 @@
 \title{Joint density estimation methods}
 \usage{
 jd_method(package = NULL, fit_fun = NULL, eval_fun = NULL, cc = TRUE,
-  suppl = list(), ...)
+  ...)
 }
 \arguments{
 \item{package}{character string of the package name; so far, only
@@ -21,9 +21,6 @@ and evaluates the density estimate on \code{newdata}.}
 \item{cc}{only used if \code{package = NULL}; if \code{TRUE}, discrete variables (and
 the class indicator) are made continuous with \code{\link[cctools:cont_conv]{cctools::cont_conv()}}; only
 use \code{FALSE} when your \code{fit_fun} can handle discrete variables.}
-
-\item{suppl}{optional; a named list of supplementary functions or objects
-required to evaluate \code{fit_fun}/\code{eval_fun}.}
 
 \item{...}{additional parameters passed to \code{fit_fun}.}
 }

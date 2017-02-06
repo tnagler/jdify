@@ -15,3 +15,14 @@ test_that("performance measures work", {
     ms <- clsfyr_performance(prob1, dat[, 1], threshold)
     expect_equal(ncol(ms), length(threshold))
 })
+
+test_that("ROC plot works", {
+    jd_fit <- jdify(cl ~ ., dat)
+    prob <- predict(jd_fit, dat, "cprobs")[, 1]
+
+    threshold <- seq(0, 1, 0.1)
+    perf <- clsfyr_performance(prob, dat[, 1], threshold)
+
+    expect_length(clsfyr_rocplot(perf, dat[, 1], threshold), 1)
+    expect_length(clsfyr_rocplot(list(perf, perf), dat[, 1], threshold), 2)
+})
