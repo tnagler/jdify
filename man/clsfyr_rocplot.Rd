@@ -4,14 +4,14 @@
 \alias{clsfyr_rocplot}
 \title{ROC plots}
 \usage{
-clsfyr_rocplot(x, cols = brewer.pal(3, "Set1"), ltys = NULL)
+clsfyr_rocplot(x, cols = NULL, ltys = NULL)
 }
 \arguments{
 \item{x}{object of class \code{"clsfyr_performance"} or a list of such objects.}
 
-\item{cols}{vector of colors for each \code{"clsfyr_performance"} object.}
+\item{cols}{vector of colors for the \code{"clsfyr_performance"} object.}
 
-\item{ltys}{vector of line types for each `"clsfyr_performance"`` object.}
+\item{ltys}{vector of line types for the `"clsfyr_performance"`` object.}
 }
 \description{
 Produces a ROC plot for one or several \code{"clsfyr_performance"} objects.
