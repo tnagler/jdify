@@ -35,7 +35,7 @@ predict.jdify <- function(object, newdata, what = "class", threshold = 0.5, ...)
     stopifnot(what %in% c("class", "cprobs"))
     stopifnot(all((threshold >= 0) & (threshold <= 1)))
 
-    mf <- model.frame(object$formula, newdata)
+    mf <- prepare_model_frame(object$formula, newdata)
     if (object$jd_method$cc)
         mf <- cctools::expand_as_numeric(mf)
 
@@ -46,9 +46,9 @@ predict.jdify <- function(object, newdata, what = "class", threshold = 0.5, ...)
 
 jdify_cprobs <- function(object, newdata) {
     # joint density at class = 0
-    newdata[, 1] <- 0
+    newdata[, 1] <- ordered(0, 0:1)
     f0 <- object$jd_method$eval_fun(object$f_hat, newdata)
-    newdata[, 1] <- 1
+    newdata[, 1] <- ordered(1, 0:1)
     # joint density at class = 1
     f1 <- object$jd_method$eval_fun(object$f_hat, newdata)
 

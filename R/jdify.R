@@ -39,9 +39,7 @@ jdify <- function(formula, data, jd_method = "cctools", ...) {
         jd_method <- jd_method(jd_method)
 
     # reduce data to used variables, expand factors
-    mf <- model.frame(formula, data)
-    if (length(levels(mf[, 1])) > 2)
-        stop("Only binary classification implemented so far.")
+    mf <- prepare_model_frame(formula, data)
 
     # fit density estimator
     args <- modifyList(list(x = mf), jd_method$.dots)
@@ -58,4 +56,12 @@ jdify <- function(formula, data, jd_method = "cctools", ...) {
              jd_method = jd_method),
         class = "jdify"
     )
+}
+
+prepare_model_frame <- function(formula, data) {
+    mf <- model.frame(formula, data)
+    if (length(levels(mf[, 1])) > 2)
+        stop("Only binary classification implemented so far.")
+    mf[, 1] <- ordered((0:1)[as.numeric(mf[, 1])], 0:1)
+    mf
 }

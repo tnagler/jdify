@@ -89,7 +89,7 @@ check_jd_method <- function(method) {
     )
 
     # prepare for fitting
-    mf <- model.frame(cl ~ ., dat)
+    mf <- prepare_model_frame(cl ~ ., dat)
     args <- modifyList(list(x = mf), method$.dots)
     if (method$cc)
         args$x <- cont_conv(args$x)
@@ -100,7 +100,7 @@ check_jd_method <- function(method) {
     }, error = function(e) stop(paste("fit_fun doesn't work:", e)))
 
     tryCatch({
-        method$eval_fun(f_hat, newdata = mf)
+        method$eval_fun(f_hat, mf)
     }, error = function(e) stop(paste("eval_fun doesn't work:", e)))
 
     TRUE

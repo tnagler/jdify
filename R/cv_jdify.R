@@ -22,6 +22,18 @@
 #' data.}
 #' }
 #'
+#' @examples
+#' # simulate training and test data
+#' dat <- data.frame(
+#'     cl = as.factor(rbinom(100, 1, 0.5)),
+#'     x1 = rnorm(100),
+#'     x2 = rbinom(100, 1, 0.3)
+#' )
+#'
+#' cv <- cv_jdify(cl ~ x1 + x2, dat)
+#' probs <- cv$cv_cprobs
+#' perf <- clsfyr_performance(probs[, 1], dat[, 1])
+#' clsfyr_rocplot(perf)
 #'
 #' @importFrom foreach foreach  %dopar% %do%
 #' @importFrom doParallel registerDoParallel
@@ -33,9 +45,7 @@ cv_jdify <- function(formula, data, jd_method = "cctools", folds  = 10,
     stopifnot(folds >= 1)
     folds <- round(folds)
     data <- as.data.frame(data)
-    mf <- model.frame(formula = formula, data = data)
-    if (length(levels(as.factor(mf[, 1]))) != 2)
-        stop("Only binary classification implemented so far.")
+    mf <- prepare_model_frame(formula, data)
     k <- 0  # CRAN check complains if undefined
 
     #  test indices for each fold
@@ -45,17 +55,11 @@ cv_jdify <- function(formula, data, jd_method = "cctools", folds  = 10,
         cl <- makeCluster(min(cores, folds[1]))
         registerDoParallel(cl)
         on.exit(stopCluster(cl))
-        res_folds <- foreach(
-            k = 1:folds[1],
-            .export = c("fit_fold", "prep_data_np")
-        ) %dopar%
+        res_folds <- foreach(k = 1:folds[1]) %dopar%
             fit_fold(k, mf, test_indexes, jd_method, ...)
     } else {
         # without
-        res_folds <- foreach(
-            k = 1:folds[1],
-            .export = c("fit_fold", "prep_data_np")
-        ) %do%
+        res_folds <- foreach(k = 1:folds[1]) %do%
             fit_fold(k, mf, test_indexes, jd_method, ...)
     }
 

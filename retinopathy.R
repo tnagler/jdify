@@ -3,10 +3,9 @@ library(jdify)
 dat <- foreign::read.arff(
     "/home/n5/research/datasets/retinopathy/messidor_features.arff"
 )
-dat <- dat[dat[, 1] == 1, ]  # only use pictures with sufficient quality
-dat <- dat[, -1]  # remove quality column
+
 ## in sample ----------------------
-dat <- dat[1:400, ]
+dat <- dat[1:400, 15:20]
 ## fit models
 model_np <- jdify(Class ~ ., data = dat, "np")
 model_cctools <- jdify(Class ~ ., data = dat, "cctools")

@@ -34,3 +34,17 @@ data.}
 \description{
 Performs k-fold cross validation for a \code{jdify} object.
 }
+\examples{
+# simulate training and test data
+dat <- data.frame(
+    cl = as.factor(rbinom(100, 1, 0.5)),
+    x1 = rnorm(100),
+    x2 = rbinom(100, 1, 0.3)
+)
+
+cv <- cv_jdify(cl ~ x1 + x2, dat)
+probs <- cv$cv_cprobs
+perf <- clsfyr_performance(probs[, 1], dat[, 1])
+clsfyr_rocplot(perf)
+
+}
