@@ -11,8 +11,7 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
   cctools,
-  RColorBrewer,
-  parallel, 
+  parallel,
   doParallel, 
   foreach
 Suggests:

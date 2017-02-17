@@ -25,9 +25,9 @@ density estimation, see \code{\link[=jd_method]{jd_method()}}.}
 \value{
 A list with elements
 \itemize{
-\item{\code{folds1``, ...,}foldsk\code{: }{for each fold: the fitted model}$fit\code{, estimated conditional probabilities (}$cprobs\code{), and indexes for training and test data (}$train_index\code{,}$test_index`).}
+\item{\code{folds1``, ...,}foldsk\code{: }{for each fold: the fitted model}$fit\code{, estimated conditional probabilities (}$probs\code{), and indexes for training and test data (}$train_index\code{,}$test_index`).}
 
-\item{\code{cv_cprobs}: }{aggragated out-of-sample \code{cprobs} in same order as original
+\item{\code{cv_probs}: }{aggragated out-of-sample \code{probs} in same order as original
 data.}
 }
 }
@@ -43,8 +43,7 @@ dat <- data.frame(
 )
 
 cv <- cv_jdify(cl ~ x1 + x2, dat)
-probs <- cv$cv_cprobs
-perf <- clsfyr_performance(probs[, 1], dat[, 1])
-clsfyr_rocplot(perf)
+probs <- cv$cv_probs
+assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 
 }

@@ -15,10 +15,10 @@
 #' @return A list with elements
 #' \itemize{
 #'   \item{`folds1``, ..., `foldsk`: }{for each fold: the fitted model `$fit`, estimated
-#' conditional probabilities (`$cprobs`), and indexes for training and test data
+#' conditional probabilities (`$probs`), and indexes for training and test data
 #' (`$train_index`, `$test_index`).}
 #'
-#'   \item{`cv_cprobs`: }{aggragated out-of-sample `cprobs` in same order as original
+#'   \item{`cv_probs`: }{aggragated out-of-sample `probs` in same order as original
 #' data.}
 #' }
 #'
@@ -31,9 +31,8 @@
 #' )
 #'
 #' cv <- cv_jdify(cl ~ x1 + x2, dat)
-#' probs <- cv$cv_cprobs
-#' perf <- clsfyr_performance(probs[, 1], dat[, 1])
-#' clsfyr_rocplot(perf)
+#' probs <- cv$cv_probs
+#' assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 #'
 #' @importFrom foreach foreach  %dopar% %do%
 #' @importFrom doParallel registerDoParallel
@@ -45,44 +44,51 @@ cv_jdify <- function(formula, data, jd_method = "cctools", folds  = 10,
     stopifnot(folds >= 1)
     folds <- round(folds)
     data <- as.data.frame(data)
-    mf <- prepare_model_frame(formula, data)
+    model <- build_model(formula, data)
     k <- 0  # CRAN check complains if undefined
 
     #  test indices for each fold
-    test_indexes <- suppressWarnings(split(seq.int(nrow(mf)), seq.int(folds)))
+    test_indexes <- suppressWarnings(split(seq.int(nrow(model$df)), seq.int(folds)))
     if (cores > 1) {
         # CV with parallelization
         cl <- makeCluster(min(cores, folds[1]))
         registerDoParallel(cl)
         on.exit(stopCluster(cl))
         res_folds <- foreach(k = 1:folds[1]) %dopar%
-            fit_fold(k, mf, test_indexes, jd_method, ...)
+            fit_fold(k, model, test_indexes, jd_method, ...)
     } else {
         # without
         res_folds <- foreach(k = 1:folds[1]) %do%
-            fit_fold(k, mf, test_indexes, jd_method, ...)
+            fit_fold(k, model, test_indexes, jd_method, ...)
     }
 
-    res_folds$model_frame <- mf
-    cv_cprobs <- matrix(NA, nrow(mf), 2)
+    # gather results
+    res_folds$model_frame <- model$df
+    cv_probs <- as.data.frame(matrix(NA, nrow(model$df), 2))
+    names(cv_probs) <- names(res_folds[[1]]$probs)
+
+    # combine out-of-sample predictions (same positions as original data)
     for (fold in seq.int(folds)) {
         i <- res_folds[[fold]]$test_index
-        cv_cprobs[i, ] <- as.matrix(res_folds[[fold]]$cprobs)
+        cv_probs[i, ] <- res_folds[[fold]]$probs
     }
-    res_folds$cv_cprobs <- as.data.frame(cv_cprobs)
+
+    # finalize
+    res_folds$cv_probs <- as.data.frame(cv_probs)
     names(res_folds)[seq.int(folds)] <- paste0("fold", seq.int(folds))
     res_folds
 }
 
-fit_fold <- function(fold, mf, test_indexes, jd_method, ...) {
+fit_fold <- function(fold, model, test_indexes, jd_method, ...) {
     test_index <- test_indexes[[fold]]
+
     # fit on training data
-    fit <- jdify(formula(mf), data = mf[-test_index, ], jd_method, ...)
+    fit <- jdify(model$formula, data = model$df[-test_index, ], jd_method, ...)
     # evaluate on test data
-    cprobs <- predict(fit, mf[test_index, ], what = "cprobs")
+    probs <- predict(fit, model$df[test_index, ], what = "probs")
 
     list(fit = fit,
-         cprobs = cprobs,
-         train_index = setdiff(seq.int(nrow(mf)), test_index),
+         probs = probs,
+         train_index = setdiff(seq.int(nrow(model$df)), test_index),
          test_index = test_index)
 }

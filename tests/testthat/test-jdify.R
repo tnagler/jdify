@@ -24,7 +24,7 @@ test_that("predict works", {
     expect_true(all(levels(preds) %in% levels(jd_fit$model_frame[, 1])))
 
     # probability prediction
-    cprobs <- predict(jd_fit, dat, what = "cprobs")
+    cprobs <- predict(jd_fit, dat, what = "probs")
     expect_gte(min(cprobs), 0)
     expect_lte(max(cprobs), 1)
 

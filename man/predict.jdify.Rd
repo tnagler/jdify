@@ -16,8 +16,7 @@
 probability estimates.}
 
 \item{threshold}{threshold parameter for class prediction (\code{what = "class"});
-predicts the first element of \code{levels(class)} if \code{prob1 > threshold}, the
-second otherwise.}
+predicts class \eqn{C} if \eqn{Pr(C) \ge threshold}.}
 
 \item{...}{unused.}
 }
@@ -37,8 +36,7 @@ dat <- data.frame(
 
 # fit density with cctools package
 model <- jdify(cl ~ x1 + x2, data = dat, jd_method("cctools"))
-pred <- predict(model, dat)                    # class predictions
-probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
-
+pred <- predict(model, dat)                   # class predictions
+probs <- predict(model, dat, what = "probs")  # conditional probabilities
 
 }

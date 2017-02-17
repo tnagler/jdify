@@ -37,12 +37,12 @@ dat <- data.frame(
 
 model <- jdify(cl ~ x1 + x2, dat)              # fitted joint density
 pred <- predict(model, dat)                    # class predictions
-probs <- predict(model, dat, what = "cprobs")  # conditional probabilities
+probs <- predict(model, dat, what = "probs")   # conditional probabilities
 
 # in-sample performance
-clsfyr_performance(probs[, 1], dat[, 1], threshold = seq(0, 1, by = 0.05))
+assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 
 }
 \seealso{
-\code{\link[=predict.jdify]{predict.jdify()}}, \code{\link[=clsfyr_performance]{clsfyr_performance()}}
+\code{\link[=predict.jdify]{predict.jdify()}}, \code{\link[=assess_clsfyr]{assess_clsfyr()}}
 }

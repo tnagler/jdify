@@ -83,14 +83,16 @@ check_jd_method <- function(method) {
     # dummy data
     set.seed(1)
     dat <- data.frame(
-        cl = as.factor(rbinom(20, 1, 0.5)),
+        cl = c("A", "B")[rbinom(20, 1, 0.5) + 1],
         x1 = rnorm(20),
-        z1 = ordered(rbinom(20, 3, 0.5), 0:3)
+        z1 = ordered(rbinom(20, 3, 0.5), 0:3),
+        f1 = as.factor(rbinom(20, 3, 0.5))
     )
 
     # prepare for fitting
-    mf <- prepare_model_frame(cl ~ ., dat)
-    args <- modifyList(list(x = mf), method$.dots)
+    model <- build_model(cl ~ ., dat)
+    args <- list(x = model$df)
+    args <- modifyList(args, method$.dots)
     if (method$cc)
         args$x <- cont_conv(args$x)
 
@@ -100,7 +102,7 @@ check_jd_method <- function(method) {
     }, error = function(e) stop(paste("fit_fun doesn't work:", e)))
 
     tryCatch({
-        method$eval_fun(f_hat, mf)
+        method$eval_fun(f_hat, newdata = model$df)
     }, error = function(e) stop(paste("eval_fun doesn't work:", e)))
 
     TRUE
