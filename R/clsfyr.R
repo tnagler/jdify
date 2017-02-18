@@ -37,8 +37,11 @@
 #'  (TN + FN)]^(-1/2)},}}
 #' \item{\code{"informedness"}: }{informedness (\eqn{TP / P + TN / N - 1}),}
 #' \item{\code{"markedness"}: }{markedness (\eqn{TP / (TP + FP) + TN / (TN + FN) - 1}),}
+#' \item{\code{"AUC"}: }{area under the curve (must be in first position)}
 #' }
 #' where `P` and `N` are the number of positives and negatives, respectively.
+#'
+#' @seealso [get_auc()]
 #'
 #' @examples
 #' # simulate training and test data
@@ -54,12 +57,26 @@
 #' # calculate performance measures
 #' assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 #'
+#' # calculate area under the curve
+#' FPR <- assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("FPR"))$value
+#' TPR <- assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("TPR"))$value
+#' get_auc(data.frame(FPR = FPR, TPR = TPR))
+#'
 #' @export
 assess_clsfyr <- function(score, true_cls, measure = "ACC",
-                        threshold = seq(0, 1, by = 0.1)) {
+                          threshold = seq(0, 1, by = 0.1)) {
     stopifnot(is.logical(true_cls) | all(true_cls %in% c(0, 1)))
     stopifnot(NCOL(score) == 1)
 
+    if (measure[1] == "AUC") {
+        stopifnot(all(measure == "AUC"))
+        # ROC curve
+        roc <- cbind(
+            assess_clsfyr(score, true_cls, "TPR", threshold)$value,
+            assess_clsfyr(score, true_cls, "FPR", threshold)$value
+        )
+        return(data.frame(measure = "AUC", threshold = NA, value = get_auc(roc)))
+    }
     # expand all combinations of measure and threshold
     threshold <- sort(threshold)
     grid <- expand.grid(
@@ -77,7 +94,6 @@ assess_clsfyr <- function(score, true_cls, measure = "ACC",
 
     grid
 }
-
 
 get_measure <- function(measure, score, threshold, true_cls) {
     pred <- (score >= as.numeric(threshold))
@@ -124,29 +140,38 @@ get_measure <- function(measure, score, threshold, true_cls) {
     )
 }
 
-make_roc <- function(perf) {
-    roc <- t(perf[c("FPR", "TPR"), ])
-    # add (0, 0) and (1, 1) points to ensure full plot
-    roc <- rbind(roc, c(0, 0), c(1, 1))
-    # sort for line plot
-    roc[, "FPR"] <- sort(roc[, "FPR"])
-    roc[, "TPR"] <- sort(roc[, "TPR"])
 
-    roc
-}
-
-get_auc <- function(perf) {
-    roc <- make_roc(perf)
+#' Calculate the area under the curve (AUC)
+#'
+#' @param roc a matrix or data frame with columns `"FPR"` and `"TPR"` containing
+#'   pairs of false and true positive rates.#'
+#' @examples
+#' # simulate training and test data
+#' dat <- data.frame(
+#'     cl = as.factor(rbinom(10, 1, 0.5)),
+#'     x1 = rnorm(10),
+#'     x2 = rbinom(10, 1, 0.3)
+#' )
+#'
+#' model <- jdify(cl ~ x1 + x2, data = dat)      # joint density fit
+#' probs <- predict(model, dat, what = "probs")  # conditional probabilities
+#'
+#' # calculate performance measures
+#' assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
+#'
+#' # calculate area under the curve
+#' FPR <- assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("FPR"))$value
+#' TPR <- assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("TPR"))$value
+#' get_auc(data.frame(FPR = FPR, TPR = TPR))
+#'
+#' @export
+get_auc <- function(roc) {
+    if (!is.data.frame(roc))
+        roc <- as.data.frame(roc)
+    stopifnot(all(names(roc) %in% c("FPR", "TPR")))
+    roc <- roc[, c("FPR", "TPR")]
+    ord <- order(roc[, 1])
+    roc <- roc[ord, ]
     idx <- seq_along(roc[, 1])[-1]
     (roc[idx, 1] - roc[idx - 1, 1]) %*% (roc[idx, 2] + roc[idx - 1, 2]) / 2
-}
-
-names_with_auc <- function(lst) {
-    nms <- numeric(length(lst))
-    for (i in seq_along(nms)) {
-        nms[i] <- paste0(
-            names(lst)[i], " (AUC = ", formatC(get_auc(lst[[i]]), 2), ")"
-        )
-    }
-    nms
 }

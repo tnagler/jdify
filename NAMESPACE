@@ -3,6 +3,7 @@
 S3method(predict,jdify)
 export(assess_clsfyr)
 export(cv_jdify)
+export(get_auc)
 export(jd_method)
 export(jdify)
 importFrom(cctools,cont_conv)

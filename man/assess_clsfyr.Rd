@@ -50,6 +50,7 @@ Valid options for \code{measure} are
  (TN + FN)]^(-1/2)},}}
 \item{\code{"informedness"}: }{informedness (\eqn{TP / P + TN / N - 1}),}
 \item{\code{"markedness"}: }{markedness (\eqn{TP / (TP + FP) + TN / (TN + FN) - 1}),}
+\item{\code{"AUC"}: }{area under the curve (must be in first position)}
 }
 where \code{P} and \code{N} are the number of positives and negatives, respectively.
 }
@@ -67,4 +68,12 @@ probs <- predict(model, dat, what = "probs")  # conditional probabilities
 # calculate performance measures
 assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 
+# calculate area under the curve
+FPR <- assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("FPR"))$value
+TPR <- assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("TPR"))$value
+get_auc(data.frame(FPR = FPR, TPR = TPR))
+
+}
+\seealso{
+\code{\link[=get_auc]{get_auc()}}
 }
