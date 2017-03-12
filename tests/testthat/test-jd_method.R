@@ -12,6 +12,6 @@ test_that("Custom building of methods works", {
         kdevine::kdevine(x, mult.1d = 2)
     eval_kdevine <- function(object, newdata, ...)
         kdevine::dkdevine(newdata, object)
-    jd_method(fit_fun = fit_kdevine, eval_fun = eval_kdevine, cc = FALSE)
+    jd_method(fit_fun = fit_kdevine, eval_fun = eval_kdevine, cc = TRUE)
     expect_error(jd_method(fit_fun = function(x, ...) x, eval_fun = function(x) x))
 })

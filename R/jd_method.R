@@ -101,6 +101,8 @@ check_jd_method <- function(method) {
         f_hat <- do.call(method$fit_fun, args)
     }, error = function(e) stop(paste("fit_fun doesn't work:", e)))
 
+    if (method$cc)
+        model$df <- expand_as_numeric(model$df)
     tryCatch({
         method$eval_fun(f_hat, newdata = model$df)
     }, error = function(e) stop(paste("eval_fun doesn't work:", e)))
