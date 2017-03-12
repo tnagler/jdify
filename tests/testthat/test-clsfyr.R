@@ -15,3 +15,11 @@ test_that("performance measures work", {
     expect_equal(nrow(perf), 11)
     expect_equal(names(perf), c("threshold", "measure", "value"))
 })
+
+
+test_that("AUC works", {
+    perf <- assess_clsfyr(probs[, 1], dat[, 1] == 1, measure = "AUC")
+    expect_error(assess_clsfyr(probs, dat[, 1]))
+    expect_equal(nrow(perf), 1)
+    expect_equal(names(perf), c("threshold", "measure", "value"))
+})

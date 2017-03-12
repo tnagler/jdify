@@ -71,11 +71,11 @@ assess_clsfyr <- function(score, true_cls, measure = "ACC",
     if (measure[1] == "AUC") {
         stopifnot(all(measure == "AUC"))
         # ROC curve
-        roc <- cbind(
-            assess_clsfyr(score, true_cls, "TPR", threshold)$value,
-            assess_clsfyr(score, true_cls, "FPR", threshold)$value
+        roc <- data.frame(
+            TPR = assess_clsfyr(score, true_cls, "TPR", threshold)$value,
+            FPR = assess_clsfyr(score, true_cls, "FPR", threshold)$value
         )
-        return(data.frame(measure = "AUC", threshold = NA, value = get_auc(roc)))
+        return(data.frame(threshold = NA, measure = "AUC", value = get_auc(roc)))
     }
     # expand all combinations of measure and threshold
     threshold <- sort(threshold)

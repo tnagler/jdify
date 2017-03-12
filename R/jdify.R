@@ -94,12 +94,6 @@ build_model <- function(formula, data, fit = NULL) {
     out
 }
 
-with_num_class <- function(mf) {
-    mf_num <- mf
-    mf_num[[1]] <- as.numeric(mf[[1]])
-    mf_num
-}
-
 ordered_as_int <- function(mf) {
     vars <- lapply(mf, function(x) if (is.ordered(x)) as.integer(x) - 1 else x)
     df <- as.data.frame(vars)
