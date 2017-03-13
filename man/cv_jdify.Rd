@@ -39,7 +39,7 @@ Performs k-fold cross validation for a \code{jdify} object.
 dat <- data.frame(
     cl = as.factor(rbinom(100, 1, 0.5)),
     x1 = rnorm(100),
-    x2 = rbinom(100, 1, 0.3)
+    x2 =  ordered(rbinom(10, 1, 0.3), 0:1)
 )
 
 cv <- cv_jdify(cl ~ x1 + x2, dat)

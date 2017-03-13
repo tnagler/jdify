@@ -19,7 +19,7 @@
 #' dat <- data.frame(
 #'     cl = as.factor(rbinom(10, 1, 0.5)),
 #'     x1 = rnorm(10),
-#'     x2 = rbinom(10, 1, 0.3)
+#'     x2 = ordered(rbinom(10, 1, 0.3), 0:1)
 #' )
 #'
 #' model <- jdify(cl ~ x1 + x2, dat)              # fitted joint density
