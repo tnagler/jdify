@@ -41,12 +41,11 @@
 cv_jdify <- function(formula, data, jd_method = "cctools", folds  = 10,
                      cores = 1,  ...) {
     # preprocessing
-    stopifnot(folds >= 1)
+    stopifnot(folds > 1)
     folds <- round(folds)
     data <- as.data.frame(data)
     model <- build_model(formula, data)
     k <- 0  # CRAN check complains if undefined
-
     #  test indices for each fold
     test_indexes <- suppressWarnings(split(seq.int(nrow(model$df)), seq.int(folds)))
     if (cores > 1) {
