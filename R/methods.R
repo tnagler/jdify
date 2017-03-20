@@ -6,8 +6,10 @@ eval_cctools <- function(object, newdata, ...)
 
 
 ## kdevine::kdevine --------------------------------
-fit_kdevine <- function(x, ...)
-    kdevine::kdevine(x, ...)
+fit_kdevine <- function(x, ...) {
+    args <- list(x = x, test.level = 0.05, theta = 0.1)
+    do.call(kdevine::kdevine, modifyList(args, list(...)))
+}
 eval_kdevine <- function(object, newdata, ...)
     kdevine::dkdevine(newdata, object)
 

@@ -37,7 +37,7 @@ cctools_method <- jd_method("cctools")
 kdevine_method <- jd_method("kdevine")
 np_method <- jd_method("np")
 
-# custom API (reimplementation of kdevine method)
+# custom API (alternative implementation of kdevine method)
 require(kdevine)
 fit_kdevine <- function(x, ...)
    kdevine::kdevine(x, ...)
