@@ -1,15 +1,24 @@
+
 jdify
 =====
+
+[![Build status Linux](https://travis-ci.org/tnagler/jdify.svg?branch=master)](https://travis-ci.org/tnagler/jdify) [![Build status Windows](https://ci.appveyor.com/api/projects/status/github/tnagler/jdify?branch=master&svg=true)](https://ci.appveyor.com/project/tnagler/jdify) [![codecov.io](https://codecov.io/github/tnagler/jdify/coverage.svg?branch=master)](https://codecov.io/github/tnagler/jdify?branch=master) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
 
 jdify is an R package implementing classifiers based on the joint density of the predictors and the class variable. Several methods for joint density estimation can be used.
 
 To install, open R and type
 
 ``` r
+# you'll need the latest versions of cctools and kdevine, too
+devtools::install_github("tnagler/cctools")
+devtools::install_github("tnagler/kdevine")
+
 devtools::install_github("tnagler/jdify")
 ```
 
 ### Functionality
+
+The core functionality is illustrated below. For a detailed description of all functions and their arguments, see the [API documentation](https://tnagler.github.io/jdify/reference/index.html).
 
 #### Classification modeling
 
@@ -52,16 +61,16 @@ The option `cc = TRUE` indicates that the method does not naturally handle discr
 cv <- cv_jdify(cl ~ x1 + x2, data = dat, folds = 3)
 cv$cv_probs
 #>            0         1
-#> 1  0.5091734 0.4908266
-#> 2  0.6318730 0.3681270
-#> 3  0.6338442 0.3661558
-#> 4  0.4712739 0.5287261
-#> 5  0.8846899 0.1153101
-#> 6  0.5000000 0.5000000
-#> 7  0.5335339 0.4664661
-#> 8  0.6672026 0.3327974
-#> 9  0.5000000 0.5000000
-#> 10 0.4949965 0.5050035
+#> 1  1.0000000 0.0000000
+#> 2  0.8304584 0.1695416
+#> 3  0.5349065 0.4650935
+#> 4  0.5000000 0.5000000
+#> 5  0.4537540 0.5462460
+#> 6  0.6871944 0.3128056
+#> 7  0.4083659 0.5916341
+#> 8  0.8959978 0.1040022
+#> 9  0.7769116 0.2230884
+#> 10 0.7190378 0.2809622
 ```
 
 The function `assess_clsfyr()` allows to calculate several performance measures from the conditional class probabilities. Its first argument is the probability of the class, the second is a class indicator.
@@ -69,26 +78,26 @@ The function `assess_clsfyr()` allows to calculate several performance measures 
 ``` r
 assess_clsfyr(cv$cv_probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 #>    threshold measure     value
-#> 1        0.0     ACC 0.4000000
-#> 2        0.1     ACC 0.4000000
-#> 3        0.2     ACC 0.4000000
-#> 4        0.3     ACC 0.4000000
-#> 5        0.4     ACC 0.4000000
-#> 6        0.5     ACC 0.2000000
-#> 7        0.6     ACC 0.6000000
-#> 8        0.7     ACC 0.5000000
-#> 9        0.8     ACC 0.5000000
-#> 10       0.9     ACC 0.6000000
-#> 11       1.0     ACC 0.6000000
-#> 12       0.0      F1 0.5714286
-#> 13       0.1      F1 0.5714286
-#> 14       0.2      F1 0.5714286
-#> 15       0.3      F1 0.5714286
-#> 16       0.4      F1 0.5714286
-#> 17       0.5      F1 0.3333333
-#> 18       0.6      F1 0.5000000
-#> 19       0.7      F1 0.0000000
-#> 20       0.8      F1 0.0000000
+#> 1        0.0     ACC 0.7000000
+#> 2        0.1     ACC 0.7000000
+#> 3        0.2     ACC 0.7000000
+#> 4        0.3     ACC 0.7000000
+#> 5        0.4     ACC 0.7000000
+#> 6        0.5     ACC 0.5000000
+#> 7        0.6     ACC 0.3000000
+#> 8        0.7     ACC 0.4000000
+#> 9        0.8     ACC 0.2000000
+#> 10       0.9     ACC 0.2000000
+#> 11       1.0     ACC 0.2000000
+#> 12       0.0      F1 0.8235294
+#> 13       0.1      F1 0.8235294
+#> 14       0.2      F1 0.8235294
+#> 15       0.3      F1 0.8235294
+#> 16       0.4      F1 0.8235294
+#> 17       0.5      F1 0.6666667
+#> 18       0.6      F1 0.4615385
+#> 19       0.7      F1 0.5000000
+#> 20       0.8      F1 0.2000000
 #> 21       0.9      F1 0.0000000
 #> 22       1.0      F1 0.0000000
 ```

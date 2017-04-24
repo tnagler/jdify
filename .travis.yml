@@ -1,0 +1,37 @@
+dist: trusty
+
+language: R
+r:
+  - oldrel
+  - release
+  - devel
+
+warnings_are_errors: false
+
+sudo: required
+
+apt_packages:
+  - gsl-bin
+  - libgsl0-dbg
+  - libgsl0-dev
+  - libgsl0ldbl
+  - libcurl4-openssl-dev
+  - libxml2-dev
+  - libcgal-dev
+  - r-cran-vinecopula
+  - r-cran-qrng
+  - r-cran-covr
+  - r-cran-testthat
+
+r_github_packages:
+  - tnagler/cctools
+
+before_install:
+  - sudo add-apt-repository ppa:marutter/c2d4u -y
+  - sudo apt-get update -q
+
+repos:
+  CRAN: http://cran.rstudio.com
+
+after_success:
+  - Rscript -e 'covr::codecov()'
