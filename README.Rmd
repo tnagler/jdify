@@ -8,6 +8,7 @@ knitr::opts_chunk$set(
     comment = "#>",
     fig.path = "inst/README-"
 )
+set.seed(5)
 ```
 
 # jdify
