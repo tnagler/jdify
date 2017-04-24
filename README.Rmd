@@ -33,8 +33,8 @@ devtools::install_github("tnagler/jdify")
 
 ### Functionality
 
-The core functionality is illustrated below. For a detailed description of all
-functions and their arguments, see the 
+The core functionality is illustrated below and in this [code snippet](https://gist.github.com/tnagler/843f5c658e1139ff669d33614cc727e6). For 
+a detailed description of all functions and their arguments, see the 
 [API documentation](https://tnagler.github.io/jdify/reference/index.html).
 
 #### Classification modeling

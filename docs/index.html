@@ -65,7 +65,7 @@ devtools::<span class="kw">install_github</span>(<span class="st">"tnagler/jdify
 <div id="functionality" class="section level3">
 <h3 class="hasAnchor">
 <a href="#functionality" class="anchor"></a>Functionality</h3>
-<p>The core functionality is illustrated below. For a detailed description of all functions and their arguments, see the <a href="https://tnagler.github.io/jdify/reference/index.html">API documentation</a>.</p>
+<p>The core functionality is illustrated below and in this <a href="https://gist.github.com/tnagler/843f5c658e1139ff669d33614cc727e6">code snippet</a>. For a detailed description of all functions and their arguments, see the <a href="https://tnagler.github.io/jdify/reference/index.html">API documentation</a>.</p>
 <div id="classification-modeling" class="section level4">
 <h4 class="hasAnchor">
 <a href="#classification-modeling" class="anchor"></a>Classification modeling</h4>
@@ -98,38 +98,38 @@ model &lt;-<span class="st"> </span><span class="kw"><a href="reference/jdify.ht
 <p><code><a href="reference/cv_jdify.html">cv_jdify()</a></code> is a convenience function that does k-fold cross validation for you. It splits the data, fits joint density models and evaluates the conditional class probabilities on the hold-out samples.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cv &lt;-<span class="st"> </span><span class="kw"><a href="reference/cv_jdify.html">cv_jdify</a></span>(cl ~<span class="st"> </span>x1 +<span class="st"> </span>x2, <span class="dt">data =</span> dat, <span class="dt">folds =</span> <span class="dv">3</span>)
 cv$cv_probs
-<span class="co">#&gt;            0         1</span>
-<span class="co">#&gt; 1  0.1643343 0.8356657</span>
-<span class="co">#&gt; 2  0.3068568 0.6931432</span>
-<span class="co">#&gt; 3  0.3984648 0.6015352</span>
-<span class="co">#&gt; 4  0.3766314 0.6233686</span>
-<span class="co">#&gt; 5  0.3176985 0.6823015</span>
-<span class="co">#&gt; 6  0.4815386 0.5184614</span>
-<span class="co">#&gt; 7  0.3812103 0.6187897</span>
-<span class="co">#&gt; 8  0.2797528 0.7202472</span>
-<span class="co">#&gt; 9  0.4501356 0.5498644</span>
-<span class="co">#&gt; 10 0.3394233 0.6605767</span></code></pre></div>
+<span class="co">#&gt;             0         1</span>
+<span class="co">#&gt; 1  0.26024545 0.7397545</span>
+<span class="co">#&gt; 2  0.69628962 0.3037104</span>
+<span class="co">#&gt; 3  1.00000000 0.0000000</span>
+<span class="co">#&gt; 4  0.34235926 0.6576407</span>
+<span class="co">#&gt; 5  0.65840274 0.3415973</span>
+<span class="co">#&gt; 6  0.50000000 0.5000000</span>
+<span class="co">#&gt; 7  0.09671546 0.9032845</span>
+<span class="co">#&gt; 8  0.39558049 0.6044195</span>
+<span class="co">#&gt; 9  1.00000000 0.0000000</span>
+<span class="co">#&gt; 10 0.25069108 0.7493089</span></code></pre></div>
 <p>The function <code><a href="reference/assess_clsfyr.html">assess_clsfyr()</a></code> allows to calculate several performance measures from the conditional class probabilities. Its first argument is the probability of the class, the second is a class indicator.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/assess_clsfyr.html">assess_clsfyr</a></span>(cv$cv_probs[, <span class="dv">1</span>], dat[, <span class="dv">1</span>] ==<span class="st"> </span><span class="dv">0</span>, <span class="dt">measure =</span> <span class="kw">c</span>(<span class="st">"ACC"</span>, <span class="st">"F1"</span>))
 <span class="co">#&gt;    threshold measure     value</span>
-<span class="co">#&gt; 1        0.0     ACC 0.3000000</span>
-<span class="co">#&gt; 2        0.1     ACC 0.3000000</span>
-<span class="co">#&gt; 3        0.2     ACC 0.2000000</span>
+<span class="co">#&gt; 1        0.0     ACC 0.4000000</span>
+<span class="co">#&gt; 2        0.1     ACC 0.5000000</span>
+<span class="co">#&gt; 3        0.2     ACC 0.5000000</span>
 <span class="co">#&gt; 4        0.3     ACC 0.3000000</span>
-<span class="co">#&gt; 5        0.4     ACC 0.7000000</span>
-<span class="co">#&gt; 6        0.5     ACC 0.7000000</span>
-<span class="co">#&gt; 7        0.6     ACC 0.7000000</span>
-<span class="co">#&gt; 8        0.7     ACC 0.7000000</span>
-<span class="co">#&gt; 9        0.8     ACC 0.7000000</span>
-<span class="co">#&gt; 10       0.9     ACC 0.7000000</span>
-<span class="co">#&gt; 11       1.0     ACC 0.7000000</span>
-<span class="co">#&gt; 12       0.0      F1 0.4615385</span>
-<span class="co">#&gt; 13       0.1      F1 0.4615385</span>
-<span class="co">#&gt; 14       0.2      F1 0.3333333</span>
+<span class="co">#&gt; 5        0.4     ACC 0.3000000</span>
+<span class="co">#&gt; 6        0.5     ACC 0.3000000</span>
+<span class="co">#&gt; 7        0.6     ACC 0.4000000</span>
+<span class="co">#&gt; 8        0.7     ACC 0.4000000</span>
+<span class="co">#&gt; 9        0.8     ACC 0.4000000</span>
+<span class="co">#&gt; 10       0.9     ACC 0.4000000</span>
+<span class="co">#&gt; 11       1.0     ACC 0.4000000</span>
+<span class="co">#&gt; 12       0.0      F1 0.5714286</span>
+<span class="co">#&gt; 13       0.1      F1 0.6153846</span>
+<span class="co">#&gt; 14       0.2      F1 0.6153846</span>
 <span class="co">#&gt; 15       0.3      F1 0.3636364</span>
-<span class="co">#&gt; 16       0.4      F1 0.4000000</span>
-<span class="co">#&gt; 17       0.5      F1 0.0000000</span>
-<span class="co">#&gt; 18       0.6      F1 0.0000000</span>
+<span class="co">#&gt; 16       0.4      F1 0.2222222</span>
+<span class="co">#&gt; 17       0.5      F1 0.2222222</span>
+<span class="co">#&gt; 18       0.6      F1 0.2500000</span>
 <span class="co">#&gt; 19       0.7      F1 0.0000000</span>
 <span class="co">#&gt; 20       0.8      F1 0.0000000</span>
 <span class="co">#&gt; 21       0.9      F1 0.0000000</span>
