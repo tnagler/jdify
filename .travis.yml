@@ -24,6 +24,7 @@ apt_packages:
 
 r_github_packages:
   - tnagler/cctools
+  - tnagler/kdevine
 
 before_install:
   - sudo add-apt-repository ppa:marutter/c2d4u -y
