@@ -125,7 +125,8 @@ use <code>FALSE</code> when your <code>fit_fun</code> can handle discrete variab
 <span class='no'>np_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='st'>"np"</span>)
 
 <span class='co'># custom API (alternative implementation of kdevine method)</span>
-<span class='fu'>require</span>(<span class='no'>kdevine</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: kdevine</span></div><div class='input'><span class='no'>fit_kdevine</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>require</span>(<span class='no'>kdevine</span>)
+<span class='no'>fit_kdevine</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>)
    <span class='kw'>kdevine</span><span class='kw'>::</span><span class='fu'>kdevine</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 <span class='no'>eval_kdevine</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='no'>...</span>)
    <span class='kw'>kdevine</span><span class='kw'>::</span><span class='fu'>dkdevine</span>(<span class='no'>newdata</span>, <span class='no'>object</span>)

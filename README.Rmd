@@ -103,7 +103,8 @@ assess_clsfyr(cv$cv_probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 
 ### References 
 
-Nagler, T. (2017). *Nonparametric density estimation with discrete variables.*
+Nagler, T. (2017). 
+*A generic approach to nonparametric function estimation with mixed data.*
 [arXiv:1704.07457](https://arxiv.org/abs/1704.07457)
 
 

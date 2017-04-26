@@ -23,7 +23,7 @@
 #' }
 #'
 #' @references Nagler, T. (2017). *A generic approach to nonparametric function
-#' estimation with discrete variables.* [arXiv:1704.07457](https://arxiv.org/abs/1704.07457)
+#' estimation with mixed data.* [arXiv:1704.07457](https://arxiv.org/abs/1704.07457)
 #'
 #' @examples
 #' # simulate training and test data
