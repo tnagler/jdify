@@ -90,7 +90,7 @@ my_eval &lt;-<span class="st"> </span>function(object, newdata, ...)
    kdevine::<span class="kw">dkdevine</span>(newdata, object)
 my_method &lt;-<span class="st"> </span><span class="kw"><a href="reference/jd_method.html">jd_method</a></span>(<span class="dt">fit_fun =</span> my_fit, <span class="dt">eval_fun =</span> my_eval, <span class="dt">cc =</span> <span class="ot">TRUE</span>)
 model &lt;-<span class="st"> </span><span class="kw"><a href="reference/jdify.html">jdify</a></span>(cl ~<span class="st"> </span>x1 +<span class="st"> </span>x2, <span class="dt">data =</span> dat, <span class="dt">jd_method =</span> my_method)</code></pre></div>
-<p>The option <code>cc = TRUE</code> indicates that the method does not naturally handle discrete data. In this case, <code>jdify</code> automatically invokes the continuous convolution trick (see, Nagler, 2017).</p>
+<p>The option <code>cc = TRUE</code> indicates that the method does not naturally handle discrete data. In this case, <code>jdify</code> automatically invokes the continuous convolution trick (see, <a href="https://arxiv.org/abs/1704.07457">Nagler, 2017</a>).</p>
 </div>
 <div id="cross-validation-and-performance-assessment" class="section level4">
 <h4 class="hasAnchor">
@@ -139,7 +139,7 @@ cv$cv_probs
 <div id="references" class="section level3">
 <h3 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h3>
-<p>Nagler, T. (2017). <em>Nonparametric density estimation with discrete variables.</em> Unpublished manuscript.</p>
+<p>Nagler, T. (2017). <em>Nonparametric density estimation with discrete variables.</em> <a href="https://arxiv.org/abs/1704.07457">arXiv:1704.07457</a></p>
 </div>
 </div>
 </div>

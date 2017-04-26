@@ -43,6 +43,10 @@ probs <- predict(model, dat, what = "probs")   # conditional probabilities
 assess_clsfyr(probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 
 }
+\references{
+Nagler, T. (2017). \emph{A generic approach to nonparametric function
+estimation with discrete variables.} \href{https://arxiv.org/abs/1704.07457}{arXiv:1704.07457}
+}
 \seealso{
 \code{\link[=predict.jdify]{predict.jdify()}}, \code{\link[=assess_clsfyr]{assess_clsfyr()}}
 }

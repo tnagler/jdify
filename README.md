@@ -51,7 +51,7 @@ my_method <- jd_method(fit_fun = my_fit, eval_fun = my_eval, cc = TRUE)
 model <- jdify(cl ~ x1 + x2, data = dat, jd_method = my_method)
 ```
 
-The option `cc = TRUE` indicates that the method does not naturally handle discrete data. In this case, `jdify` automatically invokes the continuous convolution trick (see, Nagler, 2017).
+The option `cc = TRUE` indicates that the method does not naturally handle discrete data. In this case, `jdify` automatically invokes the continuous convolution trick (see, [Nagler, 2017](https://arxiv.org/abs/1704.07457)).
 
 #### Cross validation and performance assessment
 
@@ -104,4 +104,4 @@ assess_clsfyr(cv$cv_probs[, 1], dat[, 1] == 0, measure = c("ACC", "F1"))
 
 ### References
 
-Nagler, T. (2017). *Nonparametric density estimation with discrete variables.* Unpublished manuscript.
+Nagler, T. (2017). *Nonparametric density estimation with discrete variables.* [arXiv:1704.07457](https://arxiv.org/abs/1704.07457)
