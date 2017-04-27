@@ -15,7 +15,7 @@ Imports:
   doParallel, 
   foreach
 Suggests:
-  kdevine,
+  kdevine (>= 0.4.0),
   np,
   testthat
 Roxygen: list(markdown = TRUE)

@@ -57,11 +57,7 @@
 
 <p>jdify is an R package implementing classifiers based on the joint density of the predictors and the class variable. Several methods for joint density estimation can be used.</p>
 <p>To install, open R and type</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># you'll need the latest versions of cctools and kdevine, too</span>
-devtools::<span class="kw">install_github</span>(<span class="st">"tnagler/cctools"</span>)
-devtools::<span class="kw">install_github</span>(<span class="st">"tnagler/kdevine"</span>)
-
-devtools::<span class="kw">install_github</span>(<span class="st">"tnagler/jdify"</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">"tnagler/jdify"</span>)</code></pre></div>
 <div id="functionality" class="section level3">
 <h3 class="hasAnchor">
 <a href="#functionality" class="anchor"></a>Functionality</h3>
@@ -89,7 +85,9 @@ probs &lt;-<span class="st"> </span><span class="kw">predict</span>(model, dat, 
 my_eval &lt;-<span class="st"> </span>function(object, newdata, ...)
    kdevine::<span class="kw">dkdevine</span>(newdata, object)
 my_method &lt;-<span class="st"> </span><span class="kw"><a href="reference/jd_method.html">jd_method</a></span>(<span class="dt">fit_fun =</span> my_fit, <span class="dt">eval_fun =</span> my_eval, <span class="dt">cc =</span> <span class="ot">TRUE</span>)
-model &lt;-<span class="st"> </span><span class="kw"><a href="reference/jdify.html">jdify</a></span>(cl ~<span class="st"> </span>x1 +<span class="st"> </span>x2, <span class="dt">data =</span> dat, <span class="dt">jd_method =</span> my_method)</code></pre></div>
+<span class="co">#&gt; matrix is NA. Selecting structure...</span>
+model &lt;-<span class="st"> </span><span class="kw"><a href="reference/jdify.html">jdify</a></span>(cl ~<span class="st"> </span>x1 +<span class="st"> </span>x2, <span class="dt">data =</span> dat, <span class="dt">jd_method =</span> my_method)
+<span class="co">#&gt; matrix is NA. Selecting structure...</span></code></pre></div>
 <p>The option <code>cc = TRUE</code> indicates that the method does not naturally handle discrete data. In this case, <code>jdify</code> automatically invokes the continuous convolution trick (see, <a href="https://arxiv.org/abs/1704.07457">Nagler, 2017</a>).</p>
 </div>
 <div id="cross-validation-and-performance-assessment" class="section level4">

@@ -24,10 +24,6 @@ can be used.
 
 To install, open R and type
 ``` r
-# you'll need the latest versions of cctools and kdevine, too
-devtools::install_github("tnagler/cctools")
-devtools::install_github("tnagler/kdevine")
-
 devtools::install_github("tnagler/jdify")
 ```
 

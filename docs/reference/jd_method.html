@@ -121,16 +121,15 @@ use <code>FALSE</code> when your <code>fit_fun</code> can handle discrete variab
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># pre-implemented APIs</span>
 <span class='no'>cctools_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='st'>"cctools"</span>)
-<span class='no'>kdevine_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='st'>"kdevine"</span>)
-<span class='no'>np_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='st'>"np"</span>)
+<span class='no'>kdevine_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='st'>"kdevine"</span>)</div><div class='output co'>#&gt; <span class='error'>Error in jd_method("kdevine"): installed version of 'kdevine' is too old, please update with install.packages("kdevine")</span></div><div class='input'><span class='no'>np_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='st'>"np"</span>)
 
 <span class='co'># custom API (alternative implementation of kdevine method)</span>
-<span class='fu'>require</span>(<span class='no'>kdevine</span>)
-<span class='no'>fit_kdevine</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>require</span>(<span class='no'>kdevine</span>)</div><div class='output co'>#&gt; <span class='message'>Loading required package: kdevine</span></div><div class='input'><span class='no'>fit_kdevine</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>, <span class='no'>...</span>)
    <span class='kw'>kdevine</span><span class='kw'>::</span><span class='fu'>kdevine</span>(<span class='no'>x</span>, <span class='no'>...</span>)
 <span class='no'>eval_kdevine</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='no'>...</span>)
    <span class='kw'>kdevine</span><span class='kw'>::</span><span class='fu'>dkdevine</span>(<span class='no'>newdata</span>, <span class='no'>object</span>)
-<span class='no'>my_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='kw'>fit_fun</span> <span class='kw'>=</span> <span class='no'>fit_kdevine</span>, <span class='kw'>eval_fun</span> <span class='kw'>=</span> <span class='no'>eval_kdevine</span>, <span class='kw'>cc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div></pre>
+<span class='no'>my_method</span> <span class='kw'>&lt;-</span> <span class='fu'>jd_method</span>(<span class='kw'>fit_fun</span> <span class='kw'>=</span> <span class='no'>fit_kdevine</span>, <span class='kw'>eval_fun</span> <span class='kw'>=</span> <span class='no'>eval_kdevine</span>, <span class='kw'>cc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in value[[3L]](cond): fit_fun doesn't work: Error in (1 - h) * qs[i]: non-numeric argument to binary operator</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -9,10 +9,6 @@ jdify is an R package implementing classifiers based on the joint density of the
 To install, open R and type
 
 ``` r
-# you'll need the latest versions of cctools and kdevine, too
-devtools::install_github("tnagler/cctools")
-devtools::install_github("tnagler/kdevine")
-
 devtools::install_github("tnagler/jdify")
 ```
 
@@ -48,7 +44,9 @@ my_fit <- function(x, ...)
 my_eval <- function(object, newdata, ...)
    kdevine::dkdevine(newdata, object)
 my_method <- jd_method(fit_fun = my_fit, eval_fun = my_eval, cc = TRUE)
+#> matrix is NA. Selecting structure...
 model <- jdify(cl ~ x1 + x2, data = dat, jd_method = my_method)
+#> matrix is NA. Selecting structure...
 ```
 
 The option `cc = TRUE` indicates that the method does not naturally handle discrete data. In this case, `jdify` automatically invokes the continuous convolution trick (see, [Nagler, 2017](https://arxiv.org/abs/1704.07457)).

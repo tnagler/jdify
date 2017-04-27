@@ -45,8 +45,21 @@ jd_method <- function(package = NULL, fit_fun = NULL, eval_fun = NULL,
                        eval_fun = eval_fun,
                        cc = cc)
     } else {
+        # check if correct version of package is available, otherwise install
+        stopifnot(length(package) == 1)
         stopifnot(is.character(package))
-        loadNamespace(package)
+        tryCatch(loadNamespace(package), error = function(e) {
+            install.packages(package)
+            loadNamespace(package)
+        })
+        if (package == "kdevine") {
+            if (packageVersion("kdevine") < "0.4.0") {
+                stop("installed version of 'kdevine' is too old, ",
+                     'please update with install.packages("kdevine")\n')
+            }
+        }
+
+        # create method
         method <- switch(
             package,
             "cctools" = list(fit_fun = fit_cctools,
