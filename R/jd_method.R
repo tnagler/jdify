@@ -33,7 +33,7 @@
 #' my_method <- jd_method(fit_fun = fit_kdevine, eval_fun = eval_kdevine, cc = FALSE)
 #'
 #' @importFrom stats rbinom rnorm
-#' @importFrom utils capture.output modifyList
+#' @importFrom utils capture.output modifyList install.packages packageVersion
 #' @export
 jd_method <- function(package = NULL, fit_fun = NULL, eval_fun = NULL,
                       cc = TRUE, ...) {
